@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Master 3D Pro - لعبة البلياردو الاحترافية</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#A96BFF">
+    <meta name="description" content="لعبة بلياردو ثلاثية الأبعاد احترافية مع فيزياء واقعية، ذكاء اصطناعي، وضعين للعب، وسيناريوهات متقدمة">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js and Physics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cannon@0.6.2/build/cannon.min.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="logo-3d">🎱 3D POOL</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
+            </div>
+            <div class="loading-text">Checking Resources...</div>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="main-menu hidden">
+        <!-- Header Bar -->
+        <header class="header-bar">
+            <div class="player-info">
+                <div class="avatar-container">
+                    <div class="avatar">👤</div>
+                    <div class="vip-badge">VIP 3</div>
+                </div>
+                <div class="player-details">
+                    <div class="player-name">A Salih</div>
+                    <div class="player-level">المستوى 149</div>
+                </div>
+            </div>
+            
+            <div class="events-center">
+                <div class="event-title">Vampire's Treasure</div>
+                <div class="event-timer">39h 55m 33s</div>
+            </div>
+            
+            <div class="currencies">
+                <div class="currency">
+                    <span class="currency-icon">💎</span>
+                    <span class="currency-amount">2330</span>
+                </div>
+                <div class="currency">
+                    <span class="currency-icon">💰</span>
+                    <span class="currency-amount">569,881,935</span>
+                    <button class="currency-add">+</button>
+                </div>
+                <div class="currency">
+                    <span class="currency-icon">🪙</span>
+                    <span class="currency-amount">3157</span>
+                    <button class="currency-add">+</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Daily Rewards Bar -->
+        <div class="rewards-bar">
+            <div class="reward-item">
+                <div class="reward-icon">📢</div>
+                <div class="reward-text">AD FREE</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">🎁</div>
+                <div class="reward-text">FREE COINS</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">📅</div>
+                <div class="reward-text">7</div>
+                <div class="notification-dot">1</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">🎰</div>
+                <div class="reward-text">Spin</div>
+                <div class="notification-dot">1</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">🎁</div>
+                <div class="reward-text">8</div>
+                <div class="notification-dot">1</div>
+            </div>
+            <div class="reward-item">
+                <div class="reward-icon">🏆</div>
+                <div class="reward-text">Events</div>
+            </div>
+        </div>
+
+        <!-- Game Mode Cards -->
+        <div class="game-modes">
+            <div class="game-card" data-mode="8ball-1v1">
+                <div class="card-icon">🎱</div>
+                <div class="card-title">8BALL 1 ON 1</div>
+                <div class="card-subtitle">Online</div>
+                <div class="card-glow"></div>
+            </div>
+            
+            <div class="game-card" data-mode="tournament">
+                <div class="card-icon">🏆</div>
+                <div class="card-title">8BALL TOURNAMENT</div>
+                <div class="card-subtitle">Championship</div>
+                <div class="card-glow"></div>
+            </div>
+            
+            <div class="game-card" data-mode="9ball-1v1">
+                <div class="card-icon">💎</div>
+                <div class="card-title">9BALL 1 ON 1</div>
+                <div class="card-subtitle">Advanced</div>
+                <div class="card-glow"></div>
+            </div>
+            
+            <div class="game-card" data-mode="more-games">
+                <div class="card-icon">🎮</div>
+                <div class="card-title">MORE GAMES</div>
+                <div class="card-subtitle">Coming Soon</div>
+                <div class="card-glow"></div>
+            </div>
+            
+            <div class="game-card" data-mode="8ball-offline">
+                <div class="card-icon">🖥️</div>
+                <div class="card-title">8BALL OFFLINE</div>
+                <div class="card-subtitle">Practice</div>
+                <div class="card-glow"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-section="friends">
+                <div class="nav-icon">👥</div>
+                <div class="nav-text">الأصدقاء</div>
+            </div>
+            <div class="nav-item" data-section="settings">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-text">الإعدادات</div>
+            </div>
+            <div class="nav-item" data-section="chat">
+                <div class="nav-icon">💬</div>
+                <div class="nav-text">الدردشة</div>
+                <div class="notification-badge">1</div>
+            </div>
+            <div class="nav-item" data-section="leaderboard">
+                <div class="nav-icon">🏅</div>
+                <div class="nav-text">الترتيب</div>
+            </div>
+            <div class="nav-item" data-section="store">
+                <div class="nav-icon">🛒</div>
+                <div class="nav-text">المتجر</div>
+            </div>
+        </nav>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn event-center">
+                <div class="btn-icon">🎁</div>
+                <div class="btn-text">مركز الأحداث</div>
+            </button>
+            <button class="action-btn lucky-chest">
+                <div class="btn-icon">🎰</div>
+                <div class="btn-text">صندوق الحظ</div>
+            </button>
+            <button class="action-btn store">
+                <div class="btn-icon">💰</div>
+                <div class="btn-text">المتجر</div>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+
+        <!-- VIP Club -->
+        <div class="vip-club">
+            <div class="vip-logo">👑 VIP CLUB</div>
+        </div>
+    </div>
+
+    <!-- Friends Panel -->
+    <div id="friends-panel" class="side-panel hidden">
+        <div class="panel-header">
+            <h2>FRIENDS</h2>
+            <div class="online-status">1/14 Online</div>
+            <button class="panel-close">×</button>
+        </div>
+        <div class="friends-list">
+            <div class="friend-item">
+                <div class="friend-avatar">😄</div>
+                <div class="friend-info">
+                    <div class="friend-name">SmILe</div>
+                    <div class="friend-status online">ONLINE</div>
+                    <div class="friend-level">149</div>
+                </div>
+                <div class="friend-actions">
+                    <button class="friend-btn add">ADD</button>
+                    <button class="friend-btn gift">GIFT</button>
+                </div>
+            </div>
+            <div class="friend-item">
+                <div class="friend-avatar">🎮</div>
+                <div class="friend-info">
+                    <div class="friend-name">Gamer Pro</div>
+                    <div class="friend-status offline">متصل منذ 2 ساعة</div>
+                    <div class="friend-level">187</div>
+                </div>
+                <div class="friend-actions">
+                    <button class="friend-btn edit">EDIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="game-screen hidden">
+        <!-- 3D Environment Background -->
+        <div class="bar-environment">
+            <div class="pool-table-3d">
+                <div class="table-surface"></div>
+                <div class="table-rails"></div>
+                <div class="table-pockets"></div>
+            </div>
+        </div>
+
+        <!-- Game UI -->
+        <div class="game-ui">
+            <!-- Top Bar -->
+            <div class="game-top-bar">
+                <div class="player-panel left">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-name">Player one</div>
+                    <div class="player-level">149</div>
+                    <div class="balls-progress">
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                    </div>
+                </div>
+                
+                <div class="score-display">
+                    <div class="vs-text">VS</div>
+                    <div class="score">0-0</div>
+                </div>
+                
+                <div class="player-panel right">
+                    <div class="player-avatar">🎮</div>
+                    <div class="player-name">Surfacehunter</div>
+                    <div class="player-level">52</div>
+                    <div class="balls-progress">
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                        <div class="ball-circle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Sidebar -->
+            <div class="game-sidebar left">
+                <button class="sidebar-btn">☰</button>
+                <button class="sidebar-btn">💬</button>
+                <button class="sidebar-btn">ℹ️</button>
+                <div class="power-meter">
+                    <div class="power-bar">
+                        <div class="power-indicator" id="power-indicator"></div>
+                    </div>
+                    <div class="power-controls">
+                        <button class="power-btn" id="power-up">▲</button>
+                        <button class="power-btn" id="power-down">▼</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="game-sidebar right">
+                <button class="sidebar-btn" id="cue-ball-control">⚪</button>
+                <button class="sidebar-btn" id="camera-3d">3D</button>
+                <div class="cue-display">
+                    <div class="cue-preview"></div>
+                </div>
+                <div class="power-meter">
+                    <div class="power-bar">
+                        <div class="power-indicator" id="power-indicator-right"></div>
+                    </div>
+                    <div class="power-controls">
+                        <button class="power-btn" id="power-up-right">▲</button>
+                        <button class="power-btn" id="power-down-right">▼</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="game-bottom-bar">
+                <button class="game-btn menu">☰</button>
+                <button class="game-btn chat">💬</button>
+                <button class="game-btn info">ℹ️</button>
+                <button class="game-btn turn-indicator">دورك</button>
+                <button class="game-btn settings">⚙️</button>
+                <button class="game-btn wifi">📶</button>
+            </div>
+
+            <!-- 3D Game Canvas -->
+            <div id="game-canvas" class="game-canvas"></div>
+        </div>
+    </div>
+
+    <!-- Match Setup Screen -->
+    <div id="match-setup" class="match-setup hidden">
+        <div class="setup-header">
+            <h1>1 ON 1</h1>
+            <div class="match-type">Standard</div>
+            <div class="timer">00:05</div>
+        </div>
+        
+        <div class="vs-display">
+            <div class="player-card left">
+                <div class="player-avatar-large">👤</div>
+                <div class="player-name-large">A Salih</div>
+                <div class="player-bet">149</div>
+                <div class="chips">
+                    <div class="chip red">100</div>
+                </div>
+            </div>
+            
+            <div class="vs-text-large">VS</div>
+            <div class="cue-ball-center">⚪</div>
+            
+            <div class="player-card right">
+                <div class="player-avatar-large">🎮</div>
+                <div class="player-name-large">Surfacehunter</div>
+                <div class="player-bet">52</div>
+                <div class="chips">
+                    <div class="chip red">100</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-preview">
+            <div class="ball rack">
+                <div class="ball solid" style="--ball-color: #ff0000">1</div>
+                <div class="ball solid" style="--ball-color: #ffff00">2</div>
+                <div class="ball solid" style="--ball-color: #0000ff">3</div>
+                <div class="ball solid" style="--ball-color: #800080">4</div>
+                <div class="ball solid" style="--ball-color: #ffa500">5</div>
+                <div class="ball solid" style="--ball-color: #008000">6</div>
+                <div class="ball solid" style="--ball-color: #800000">7</div>
+                <div class="ball eight">8</div>
+                <div class="ball stripe" style="--ball-color: #ff0000">9</div>
+                <div class="ball stripe" style="--ball-color: #ffff00">10</div>
+                <div class="ball stripe" style="--ball-color: #0000ff">11</div>
+                <div class="ball stripe" style="--ball-color: #800080">12</div>
+                <div class="ball stripe" style="--ball-color: #ffa500">13</div>
+                <div class="ball stripe" style="--ball-color: #008000">14</div>
+                <div class="ball stripe" style="--ball-color: #800000">15</div>
+            </div>
+        </div>
+        
+        <button class="cancel-btn">CANCEL</button>
+    </div>
+
+    <!-- Lucky Chest Modal -->
+    <div id="lucky-chest-modal" class="modal hidden">
+        <div class="modal-content lucky-chest">
+            <div class="modal-header">
+                <button class="modal-close">×</button>
+                <h2>LUCKY CHEST</h2>
+            </div>
+            
+            <div class="chest-grid">
+                <div class="chest-item" data-reward="coins">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">8</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="double">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">2x</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="coins">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">8</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="coins">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">8</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="quintuple">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">5x</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="coins">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">8</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="coins">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">8</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="coins">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">8</div>
+                    </div>
+                </div>
+                <div class="chest-item" data-reward="gold">
+                    <div class="chest-front">🎱</div>
+                    <div class="chest-back">
+                        <div class="reward-display">x1</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="info-btn">INFO</button>
+                <div class="cost-display">
+                    <div class="cost-text">Cost: <span class="cost-amount">Free</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Modal -->
+    <div id="store-modal" class="modal hidden">
+        <div class="modal-content store">
+            <div class="modal-header">
+                <button class="modal-close">×</button>
+                <h2>🛒 المتجر</h2>
+            </div>
+            
+            <div class="store-tabs">
+                <button class="store-tab active">Gold Coins</button>
+                <button class="store-tab">Gems</button>
+                <button class="store-tab">VIP</button>
+            </div>
+            
+            <div class="store-items">
+                <div class="store-item">
+                    <div class="item-icon">💰</div>
+                    <div class="item-details">
+                        <div class="item-name">100 Gold</div>
+                        <div class="item-price">$0.99</div>
+                    </div>
+                    <button class="buy-btn">شراء</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-icon">💰</div>
+                    <div class="item-details">
+                        <div class="item-name">500 Gold</div>
+                        <div class="item-price">$2.99</div>
+                    </div>
+                    <button class="buy-btn">شراء</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-icon">💰</div>
+                    <div class="item-details">
+                        <div class="item-name">1,000 Gold</div>
+                        <div class="item-price">$4.99</div>
+                    </div>
+                    <button class="buy-btn">شراء</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-icon">💰</div>
+                    <div class="item-details">
+                        <div class="item-name">5,000 Gold</div>
+                        <div class="item-price">$19.99</div>
+                    </div>
+                    <button class="buy-btn">شراء</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-icon">💰</div>
+                    <div class="item-details">
+                        <div class="item-name">10,000 Gold</div>
+                        <div class="item-price">$29.99</div>
+                    </div>
+                    <button class="buy-btn">شراء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="game.js"></script>
+    
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered:', registration))
+                    .catch(error => console.log('SW registration failed:', error));
+            });
+        }
+
+        // Loading Animation
+        window.addEventListener('load', () => {
+            const loadingProgress = document.getElementById('loading-progress');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').classList.add('hidden');
+                        document.getElementById('main-menu').classList.remove('hidden');
+                    }, 500);
+                }
+                loadingProgress.style.width = progress + '%';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
